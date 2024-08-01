@@ -5,83 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Calculator</title>
     <style>
-        /* General Styles */
+        :root {
+            --primary-color: #00796b;
+            --secondary-color: #b2dfdb;
+            --background-color: #e0f7fa;
+            --text-color: #333;
+            --error-color: #d32f2f;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e0f7fa;
-            color: #333;
+            background-color: var(--background-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
         }
 
         .center {
             text-align: center;
             background-color: #ffffff;
-            padding: 40px;
+            padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            width: 500px;
-            max-width: 100%;
+            box-shadow: 0 8px 16px var(--shadow-color);
+            width: 90%;
+            max-width: 500px;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        h1 {
-            margin-bottom: 20px;
-            color: #00796b;
-            font-size: 2rem;
+        h1, h2 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
         }
 
-        input[type="number"], select {
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #b2dfdb;
+        input, select, button {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid var(--secondary-color);
             border-radius: 8px;
-            width: calc(100% - 24px);
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        .button-container button {
-            padding: 12px 24px;
-            margin: 5px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #4db6ac, #00796b);
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--secondary-color);
+        }
+
+        button {
+            background: linear-gradient(135deg, #4db6ac, var(--primary-color));
             color: #ffffff;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .button-container button:hover {
-            background: linear-gradient(135deg, #00796b, #004d40);
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
         }
 
         #result {
-            margin-top: 20px;
-            font-size: 24px;
-            color: #00796b;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 1rem 0;
         }
 
         #error {
-            color: #d32f2f;
-            margin-top: 10px;
+            color: var(--error-color);
         }
 
         .toggle-container {
-            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
         }
 
         .toggle-switch {
             position: relative;
-            display: inline-block;
             width: 60px;
             height: 34px;
         }
@@ -99,7 +110,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #b2dfdb;
+            background-color: var(--secondary-color);
             transition: .4s;
             border-radius: 34px;
         }
@@ -109,15 +120,15 @@
             content: "";
             height: 26px;
             width: 26px;
-            border-radius: 50%;
             left: 4px;
             bottom: 4px;
             background-color: white;
             transition: .4s;
+            border-radius: 50%;
         }
 
         input:checked + .slider {
-            background-color: #00796b;
+            background-color: var(--primary-color);
         }
 
         input:checked + .slider:before {
@@ -126,117 +137,63 @@
 
         .toggle-label {
             margin-left: 10px;
-            font-size: 16px;
-            color: #00796b;
+            font-size: 1rem;
+            color: var(--primary-color);
         }
 
-        .clear-history {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background-color: #ff5252;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+        #historyList {
+            list-style-type: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
         }
 
-        .clear-history:hover {
-            background-color: #d32f2f;
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        #historyList li {
+            background-color: var(--secondary-color);
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 4px;
         }
 
         /* Dark Mode Styles */
         body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --primary-color: #00bcd4;
+            --secondary-color: #424242;
+            --shadow-color: rgba(255, 255, 255, 0.1);
         }
 
         body.dark-mode .center {
             background-color: #1e1e1e;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
         }
 
-        body.dark-mode h1 {
-            color: #00bcd4;
-        }
-
-        body.dark-mode input[type="number"], 
+        body.dark-mode input, 
         body.dark-mode select {
-            border: 1px solid #00bcd4;
             background-color: #333;
-            color: #e0e0e0;
+            color: var(--text-color);
         }
 
-        body.dark-mode .button-container button {
-            background: linear-gradient(135deg, #004d40, #00796b);
+        body.dark-mode button {
+            background: linear-gradient(135deg, #004d40, var(--primary-color));
         }
 
-        body.dark-mode .button-container button:hover {
-            background: linear-gradient(135deg, #00796b, #004d40);
-        }
-
-        body.dark-mode #result {
-            color: #00bcd4;
-        }
-
-        body.dark-mode #error {
-            color: #ff8a80;
-        }
-
-        body.dark-mode .toggle-switch .slider {
-            background-color: #424242;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .center {
-                padding: 20px;
-                width: 90%;
+                padding: 1rem;
             }
 
             h1 {
                 font-size: 1.5rem;
             }
 
-            input[type="number"], select {
-                font-size: 14px;
-                padding: 10px;
-            }
-
-            .button-container button {
-                padding: 10px 20px;
-                font-size: 14px;
+            input, select, button {
+                font-size: 0.9rem;
             }
 
             #result {
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .center {
-                padding: 10px;
-                width: 95%;
-            }
-
-            h1 {
                 font-size: 1.2rem;
-            }
-
-            input[type="number"], select {
-                font-size: 12px;
-                padding: 8px;
-            }
-
-            .button-container button {
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-
-            #result {
-                font-size: 18px;
             }
         }
     </style>
@@ -244,10 +201,10 @@
 <body>
     <div class="center">
         <h1>Advanced Calculator</h1>
-        <form onsubmit="return validateForm(event)">
-            <input type="number" name="number1" id="number1" placeholder="Enter first number">
-            <input type="number" name="number2" id="number2" placeholder="Enter second number">
-            <select name="operation" id="operation" required>
+        <form id="calcForm">
+            <input type="number" id="number1" placeholder="Enter first number" required>
+            <input type="number" id="number2" placeholder="Enter second number">
+            <select id="operation" required>
                 <option value="" disabled selected>Select an operation</option>
                 <option value="add">Add</option>
                 <option value="subtract">Subtract</option>
@@ -256,13 +213,11 @@
                 <option value="sqrt">Square Root</option>
                 <option value="power">Exponentiation</option>
             </select>
-            <div class="button-container">
-                <button type="submit">Calculate</button>
-                <button type="button" class="clear-history" onclick="clearHistory()">Clear History</button>
-            </div>
+            <button type="submit">Calculate</button>
         </form>
-        <h2 id="result"></h2>
+        <div id="result"></div>
         <p id="error"></p>
+        <button id="clearHistory">Clear History</button>
         <div class="toggle-container">
             <label class="toggle-switch">
                 <input type="checkbox" id="themeToggle">
@@ -276,128 +231,98 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.getElementById('themeToggle');
-            const savedTheme = localStorage.getItem('theme');
+        const calcForm = document.getElementById('calcForm');
+        const number1Input = document.getElementById('number1');
+        const number2Input = document.getElementById('number2');
+        const operationSelect = document.getElementById('operation');
+        const resultDiv = document.getElementById('result');
+        const errorP = document.getElementById('error');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+        const themeToggle = document.getElementById('themeToggle');
+        const historyList = document.getElementById('historyList');
 
+        const operations = {
+            add: (a, b) => a + b,
+            subtract: (a, b) => a - b,
+            multiply: (a, b) => a * b,
+            divide: (a, b) => b !== 0 ? a / b : 'Cannot divide by zero',
+            sqrt: a => Math.sqrt(a),
+            power: (a, b) => Math.pow(a, b)
+        };
+
+        const operationSymbols = {
+            add: '+', subtract: '-', multiply: '*', divide: '/', sqrt: '√', power: '^'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
                 themeToggle.checked = true;
-            } else {
-                document.body.classList.remove('dark-mode');
-                themeToggle.checked = false;
             }
 
-            themeToggle.addEventListener('change', (event) => {
-                const isDarkMode = event.target.checked;
-                document.body.classList.toggle('dark-mode', isDarkMode);
-                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            });
-
-            const history = JSON.parse(localStorage.getItem('history')) || [];
-            displayHistory(history);
+            displayHistory();
         });
 
-        function clearHistory() {
+        calcForm.addEventListener('submit', e => {
+            e.preventDefault();
+            calculate();
+        });
+
+        clearHistoryBtn.addEventListener('click', () => {
             localStorage.removeItem('history');
-            document.getElementById('historyList').innerHTML = '';
-        }
+            displayHistory();
+        });
 
-        function validateForm(event) {
-            event.preventDefault();
-            const number1 = document.getElementById('number1').value;
-            const number2 = document.getElementById('number2').value;
-            const operation = document.getElementById('operation').value;
-            let error = '';
-            let result = '';
+        themeToggle.addEventListener('change', e => {
+            document.body.classList.toggle('dark-mode', e.target.checked);
+            localStorage.setItem('theme', e.target.checked ? 'dark' : 'light');
+        });
 
-            if (operation === 'sqrt') {
-                if (!number1) {
-                    error = 'Please enter a number for the square root operation.';
-                } else {
-                    result = `Square Root of ${number1} is ${Math.sqrt(parseFloat(number1))}`;
-                }
-            } else {
-                if (!number1 || !number2) {
-                    error = 'Please enter both numbers.';
-                } else {
-                    result = calculateResult(number1, number2, operation);
-                }
+        function calculate() {
+            const num1 = parseFloat(number1Input.value);
+            const num2 = parseFloat(number2Input.value);
+            const operation = operationSelect.value;
+
+            if (operation === 'sqrt' && !number1Input.value) {
+                showError('Please enter a number for the square root operation.');
+                return;
             }
 
-            if (error) {
-                document.getElementById('error').innerText = error;
-                document.getElementById('result').innerText = '';
-                return false;
+            if ((operation !== 'sqrt' && !number2Input.value) || isNaN(num1) || (operation !== 'sqrt' && isNaN(num2))) {
+                showError('Please enter valid numbers.');
+                return;
             }
 
-            document.getElementById('error').innerText = '';
-            document.getElementById('result').innerText = result;
-
-            const historyItem = `${number1} ${getOperationSymbol(operation)} ${number2} = ${result}`;
-            saveToHistory(historyItem);
-            return false;
+            const result = operations[operation](num1, num2);
+            showResult(result);
+            saveToHistory(num1, num2, operation, result);
         }
 
-        function calculateResult(number1, number2, operation) {
-            let result;
-            switch (operation) {
-                case 'add':
-                    result = parseFloat(number1) + parseFloat(number2);
-                    break;
-                case 'subtract':
-                    result = parseFloat(number1) - parseFloat(number2);
-                    break;
-                case 'multiply':
-                    result = parseFloat(number1) * parseFloat(number2);
-                    break;
-                case 'divide':
-                    result = parseFloat(number1) / parseFloat(number2);
-                    break;
-                case 'power':
-                    result = Math.pow(parseFloat(number1), parseFloat(number2));
-                    break;
-                default:
-                    result = 'Invalid operation';
-                    break;
-            }
-            return result;
+        function showResult(result) {
+            resultDiv.textContent = `Result: ${result}`;
+            errorP.textContent = '';
         }
 
-        function getOperationSymbol(operation) {
-            switch (operation) {
-                case 'add':
-                    return '+';
-                case 'subtract':
-                    return '-';
-                case 'multiply':
-                    return '*';
-                case 'divide':
-                    return '/';
-                case 'sqrt':
-                    return '√';
-                case 'power':
-                    return '^';
-                default:
-                    return '';
-            }
+        function showError(message) {
+            errorP.textContent = message;
+            resultDiv.textContent = '';
         }
 
-        function saveToHistory(item) {
+        function saveToHistory(num1, num2, operation, result) {
             const history = JSON.parse(localStorage.getItem('history')) || [];
-            history.push(item);
-            localStorage.setItem('history', JSON.stringify(history));
-            displayHistory(history);
+            const symbol = operationSymbols[operation];
+            const historyItem = operation === 'sqrt' 
+                ? `${symbol}${num1} = ${result}`
+                : `${num1} ${symbol} ${num2} = ${result}`;
+            history.unshift(historyItem);
+            localStorage.setItem('history', JSON.stringify(history.slice(0, 10)));
+            displayHistory();
         }
 
-        function displayHistory(history) {
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            history.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.textContent = item;
-                historyList.appendChild(listItem);
-            });
+        function displayHistory() {
+            const history = JSON.parse(localStorage.getItem('history')) || [];
+            historyList.innerHTML = history.map(item => `<li>${item}</li>`).join('');
         }
     </script>
 </body>
